@@ -1,0 +1,443 @@
+:root {
+    --bg-color: #000000;
+    --text-color: #ffffff;
+    --secondary-text: rgba(255, 255, 255, 0.5);
+    --grid-line: rgba(255, 255, 255, 0.15);
+    --font-main: 'Inter', -apple-system, system-ui, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-main);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none;
+}
+
+#root {
+    width: 100%;
+    max-width: 600px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Base Reveal Animation */
+@keyframes smooth-reveal {
+    from {
+        opacity: 0;
+        filter: blur(10px);
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+}
+
+/* Auth Screen - RESTORED TO SIDE-BY-SIDE RECTANGLES */
+.auth-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    animation: smooth-reveal 1s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.auth-stack {
+    display: flex;
+    flex-direction: row;
+    /* Horizontal as requested */
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.auth-btn {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    /* Logo on top, text below for compact side-by-side */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 100px;
+}
+
+.auth-btn:hover {
+    border-color: #ffffff;
+    background: #1a1a1a;
+    transform: translateY(-3px);
+}
+
+.auth-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.auth-btn span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+}
+
+.auth-btn.linked {
+    border-color: #ffffff;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+}
+
+/* Splash Screen */
+.splash-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: splash-flow 3.2s ease-in-out forwards;
+}
+
+@keyframes splash-flow {
+    0% {
+        opacity: 0;
+        filter: blur(20px);
+        transform: scale(0.9);
+    }
+
+    30% {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+    }
+
+    80% {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        filter: blur(10px);
+        transform: scale(1.05);
+    }
+}
+
+/* Permission Screen */
+.permission-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+    animation: smooth-reveal 0.8s ease-out;
+}
+
+.neural-header {
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+.neural-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+    margin-bottom: 8px;
+}
+
+.neural-version {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    opacity: 0.5;
+    text-transform: uppercase;
+}
+
+.permission-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.neural-btn {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 50px;
+    color: white;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.neural-btn.granted {
+    border-color: #fff;
+    background: #222;
+}
+
+/* Game Interface */
+.game-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 50px 20px;
+    animation: smooth-reveal 0.5s ease-out;
+}
+
+.game-header {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    align-items: baseline;
+    margin-bottom: 30px;
+    user-select: none;
+}
+
+.logo-text {
+    font-size: 1.8rem;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+}
+
+.mold-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--secondary-text);
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.level-stats {
+    text-align: right;
+}
+
+.level-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: var(--secondary-text);
+    font-weight: 600;
+    display: block;
+    margin-bottom: -5px;
+}
+
+.level-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.preview-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.mini-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 16px);
+    grid-template-rows: repeat(3, 16px);
+    gap: 1.5px;
+}
+
+.mini-cell {
+    width: 16px;
+    height: 16px;
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+}
+
+.mini-cell.active {
+    background: #fff;
+    border: none;
+}
+
+.grid-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(5, 62px);
+    grid-template-rows: repeat(5, 62px);
+    border: 0.25px solid var(--grid-line);
+    background: #000;
+    position: relative;
+}
+
+.board-cell {
+    width: 62px;
+    height: 62px;
+    border: 0.25px solid var(--grid-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-placed {
+    width: 54px;
+    height: 54px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    animation: card-bloom 0.2s ease-out forwards;
+}
+
+.board-cell.target-hint {
+    background: rgba(255, 255, 255, 0.08);
+    /* Transparent grey block per image */
+}
+
+@keyframes card-bloom {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.next-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.card-stack {
+    width: 58px;
+    height: 68px;
+    background: #111;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    cursor: grab;
+}
+
+.card-stack::before {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    background: linear-gradient(0deg, #333, #fff, #333);
+    border-radius: 9.5px;
+    z-index: -1;
+    animation: border-spin 3s linear infinite;
+    opacity: 0.8;
+}
+
+.card-stack::after {
+    content: '';
+    position: absolute;
+    inset: 1.5px;
+    background: #111;
+    border-radius: 7px;
+    z-index: -1;
+}
+
+@keyframes border-spin {
+    0% {
+        filter: hue-rotate(0deg) brightness(1);
+    }
+
+    50% {
+        filter: hue-rotate(180deg) brightness(1.7);
+    }
+
+    100% {
+        filter: hue-rotate(360deg) brightness(1);
+    }
+}
+
+.next-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--secondary-text);
+    font-weight: 700;
+}
+
+.active-drag-card {
+    position: absolute;
+    width: 62px;
+    height: 72px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.shake-gentle {
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-4px);
+    }
+
+    75% {
+        transform: translateX(4px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.success-flash {
+    animation: success-glow 0.5s ease-out;
+}
+
+@keyframes success-glow {
+    0% {
+        background: #000;
+    }
+
+    50% {
+        background: #111;
+    }
+
+    100% {
+        background: #000;
+    }
+}
