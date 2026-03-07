@@ -1,0 +1,5 @@
+{
+  "name": "Tive AI",
+  "description": "An innovative voice-first AI assistant with a generative interface that evolves with you.",
+  "requestFramePermissions": ["microphone", "geolocation"]
+}

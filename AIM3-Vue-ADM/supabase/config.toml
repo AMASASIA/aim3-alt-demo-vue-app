@@ -1,0 +1,4 @@
+project_id = "your-project-id"
+
+[functions.tive-core]
+verify_jwt = false # Tive◎AI often handles its own auth or is public/semi-public

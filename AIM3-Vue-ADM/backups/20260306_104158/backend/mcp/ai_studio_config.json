@@ -1,0 +1,10 @@
+{
+    "project_id": "gen-lang-client-0917953723",
+    "system_instruction": "あなたはMINTシステムの核となる推論エンジンです。出力は常に論理トポロジーに基づき、検証可能な形式で行ってください。",
+    "safety_settings": "BLOCK_NONE",
+    "generation_config": {
+        "temperature": 0.7,
+        "top_p": 0.95,
+        "max_output_tokens": 8192
+    }
+}

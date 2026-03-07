@@ -1,0 +1,150 @@
+{
+    "workflow": {
+        "id": "workflow_cs_001",
+        "name": "Customer Support Triage & Response",
+        "description": "Automatically classifies and drafts responses for customer inquiries using Gemini."
+    },
+    "nodes": [
+        {
+            "id": "trigger_inquiry",
+            "type": "TriggerNode",
+            "config": {
+                "eventSource": "email_webhook",
+                "parameters": [
+                    "customer_email",
+                    "message_body"
+                ]
+            }
+        },
+        {
+            "id": "ai_analyze_intent",
+            "type": "AIActionNode",
+            "config": {
+                "model": "gemini-1.5-flash",
+                "systemInstruction": "You are a customer support triage agent. Analyze the message and extract: 1. Sentiment (Positive/Negative/Neutral) 2. Intent (Order_Status, Technical_Support, General_Inquiry).",
+                "inputs": [
+                    "message_body"
+                ],
+                "outputs": [
+                    "sentiment",
+                    "intent"
+                ]
+            }
+        },
+        {
+            "id": "logic_route",
+            "type": "LogicBranchNode",
+            "config": {
+                "conditionVariable": "intent",
+                "branches": [
+                    {
+                        "value": "Order_Status",
+                        "target": "data_fetch_order"
+                    },
+                    {
+                        "value": "Technical_Support",
+                        "target": "ai_tech_assist"
+                    },
+                    {
+                        "value": "General_Inquiry",
+                        "target": "ai_general_response"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "data_fetch_order",
+            "type": "DataNode",
+            "config": {
+                "operation": "READ",
+                "source": "OrderDB",
+                "query": "SELECT status, tracking_id FROM orders WHERE email = :customer_email ORDER BY created_at DESC LIMIT 1",
+                "inputs": [
+                    "customer_email"
+                ],
+                "outputs": [
+                    "order_details"
+                ]
+            }
+        },
+        {
+            "id": "ai_tech_assist",
+            "type": "AIActionNode",
+            "config": {
+                "model": "gemini-1.5-pro",
+                "systemInstruction": "Draft a helpful technical support response based on the query. Suggest troubleshooting steps.",
+                "inputs": [
+                    "message_body"
+                ],
+                "outputs": [
+                    "draft_response"
+                ]
+            }
+        },
+        {
+            "id": "ai_draft_order_response",
+            "type": "AIActionNode",
+            "config": {
+                "model": "gemini-1.5-flash",
+                "systemInstruction": "Draft a response with the order status. Be polite.",
+                "inputs": [
+                    "order_details"
+                ],
+                "outputs": [
+                    "draft_response"
+                ]
+            }
+        },
+        {
+            "id": "ai_general_response",
+            "type": "AIActionNode",
+            "config": {
+                "model": "gemini-1.5-flash",
+                "systemInstruction": "Draft a general polite response acknowledging receipt.",
+                "inputs": [
+                    "message_body"
+                ],
+                "outputs": [
+                    "draft_response"
+                ]
+            }
+        },
+        {
+            "id": "action_send_email",
+            "type": "ActionNode",
+            "config": {
+                "service": "email_gateway",
+                "inputs": [
+                    "draft_response",
+                    "customer_email"
+                ]
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": "trigger_inquiry",
+            "target": "ai_analyze_intent"
+        },
+        {
+            "source": "ai_analyze_intent",
+            "target": "logic_route"
+        },
+        {
+            "source": "data_fetch_order",
+            "target": "ai_draft_order_response"
+        },
+        {
+            "source": "ai_draft_order_response",
+            "target": "action_send_email"
+        },
+        {
+            "source": "ai_tech_assist",
+            "target": "action_send_email"
+        },
+        {
+            "source": "ai_general_response",
+            "target": "action_send_email"
+        }
+    ]
+}

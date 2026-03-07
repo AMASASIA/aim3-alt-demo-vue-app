@@ -1,0 +1,79 @@
+{
+    "workflow": {
+        "id": "workflow_support_orchestrator",
+        "name": "AI Customer Support Orchestrator",
+        "description": "Orchestrates multi-channel inquiries using MINT topology",
+        "version": "1.2.0"
+    },
+    "nodes": [
+        {
+            "id": "trigger_inbound",
+            "type": "TriggerNode",
+            "config": {
+                "channel": "webhook",
+                "parameters": [
+                    "userId",
+                    "message",
+                    "channelType"
+                ]
+            }
+        },
+        {
+            "id": "mint_reasoning",
+            "type": "LogicNode",
+            "config": {
+                "systemInstruction": "You are the MINT Reasoning Engine. Analyze the user's intent: {message}. Determine the urgency (High/Low) and route accordingly.",
+                "model": "gemini-1.5-flash",
+                "outputs": [
+                    "intent",
+                    "urgency",
+                    "plan"
+                ]
+            }
+        },
+        {
+            "id": "mint_action",
+            "type": "ActionNode",
+            "config": {
+                "function": "executeSupportPlan",
+                "inputs": [
+                    "plan",
+                    "intent"
+                ]
+            }
+        },
+        {
+            "id": "mint_observation",
+            "type": "ValidationNode",
+            "config": {
+                "criteria": "Response must be polite and resolve the user's core issue.",
+                "maxRetries": 2
+            }
+        },
+        {
+            "id": "response_gateway",
+            "type": "ResponseNode",
+            "config": {
+                "format": "json"
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": "trigger_inbound",
+            "target": "mint_reasoning"
+        },
+        {
+            "source": "mint_reasoning",
+            "target": "mint_action"
+        },
+        {
+            "source": "mint_action",
+            "target": "mint_observation"
+        },
+        {
+            "source": "mint_observation",
+            "target": "response_gateway"
+        }
+    ]
+}

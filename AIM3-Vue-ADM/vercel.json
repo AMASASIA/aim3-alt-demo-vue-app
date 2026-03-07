@@ -1,0 +1,30 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "backend/server.js",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "package.json",
+            "use": "@vercel/static-build",
+            "config": {
+                "distDir": "dist"
+            }
+        }
+    ],
+    "rewrites": [
+        {
+            "source": "/(api|atomicMint|agent|consensus|opal|deployment|f)/(.*)",
+            "destination": "/backend/server.js"
+        },
+        {
+            "source": "/((?!assets|static|favicon.ico).*)",
+            "destination": "/index.html"
+        }
+    ],
+    "env": {
+        "NODE_ENV": "production",
+        "PYTHON_CORE_URL": "SERVERLESS_ACTIVE"
+    }
+}

@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.env
+# Ignore logs and build outputs
+build_*.txt
+build_output.txt
+diff_main.txt
+__pycache__/

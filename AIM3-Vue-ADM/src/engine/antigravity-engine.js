@@ -7,9 +7,11 @@ export const AntigravityEngine = {
     aiState: {},
     energy: 0.5,
     glowState: 'stable',
-    particleColor: 'white',
-    gravity: { x: 0, y: 1 },
+    particleColor: '#00ffcc',
+    targetColor: '#00ffcc',
+    gravity: { x: 0, y: 0.05 },
     reactivity: 1.0,
+    startTime: Date.now(),
 
     init(canvas) {
         if (canvas) {
@@ -18,103 +20,178 @@ export const AntigravityEngine = {
             this.resize();
             window.addEventListener('resize', () => this.resize());
 
-            // Initialize particles
-            this.particles = Array.from({ length: 100 }, () => ({
+            // Initialize more particles for "Premium" feel
+            this.particles = Array.from({ length: 150 }, () => ({
                 x: Math.random() * this.canvas.width,
                 y: Math.random() * this.canvas.height,
-                vx: 0,
-                vy: 0
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                size: Math.random() * 2 + 1,
+                alpha: Math.random() * 0.5 + 0.2
             }));
-
-            // Start loop if needed, or rely on external loop calling update()
-            // Here we just setup state
         }
-        console.log("Antigravity Engine Initialized");
+        console.log("Tive Antigravity Engine Initialized");
     },
 
     resize() {
         if (this.canvas) {
-            this.canvas.width = window.innerWidth;
-            this.canvas.height = window.innerHeight;
+            const rect = this.canvas.parentElement.getBoundingClientRect();
+            this.canvas.width = rect.width || window.innerWidth;
+            this.canvas.height = rect.height || window.innerHeight;
         }
     },
 
     loadAIState(ai) {
-        console.log("Loading AI State into Engine:", ai);
+        console.log("Synchronizing Tive Intelligence with Physical Engine:", ai);
         this.aiState = ai;
 
-        // Color Control
-        if (ai.color === "bright") this.particleColor = "#FFFF00"; // Yellow
-        if (ai.color === "calm") this.particleColor = "#00FFFF"; // Cyan
-        if (ai.color === "danger") this.particleColor = "#FF0000"; // Red
+        // Smooth Color Transition Target
+        if (ai.color) this.targetColor = ai.color;
 
-        // Manual override if color is hex or other string
-        if (ai.color && ai.color.startsWith('#')) this.particleColor = ai.color;
-
-        // Gravity Direction
-        this.gravity = ai.gravity || { x: 0, y: 1 };
-
-        // Energy Level (GlowFrame linkage)
+        // Gravity & Energy Dynamics
+        this.gravity = ai.gravity || { x: 0, y: 0.05 };
         this.energy = ai.energyScore !== undefined ? ai.energyScore : 0.5;
-
-        // Reactivity
         this.reactivity = ai.reactivity !== undefined ? ai.reactivity : 1.0;
 
-        if (this.energy > 0.8) this.glowState = 'reactive';
-        else this.glowState = 'stable';
+        this.glowState = this.energy > 0.8 ? 'reactive' : 'stable';
+
+        // Omotenashi (Hospitality) special effect
+        if (ai.type === 'omotenashi') {
+            console.log("[Engine] Entering Omotenashi State...");
+            this.particles.forEach(p => {
+                p.vx *= 0.2;
+                p.vy *= 0.2;
+                p.alpha = 0.8;
+            });
+        }
     },
 
     update() {
-        if (!this.ctx) return;
+        if (!this.ctx || !this.canvas) return;
 
         const ctx = this.ctx;
         const w = this.canvas.width;
         const h = this.canvas.height;
 
-        // Clear with trail effect
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        // --- 1. Organic Pulse (Heartbeat & Breath) ---
+        const time = (Date.now() - this.startTime) * 0.001;
+        const breath = Math.sin(time * 0.8) * 0.15 + 0.85; // Slow breathing
+        const heartThump = Math.pow(Math.sin(time * 2.5), 20) * 0.2; // Heartbeat spike
+        const globalScale = breath + heartThump;
+
+        // Background: Deep Sacred Dark with a hint of warmth
+        ctx.fillStyle = 'rgba(12, 8, 10, 0.18)';
         ctx.fillRect(0, 0, w, h);
 
-        this.particles.forEach(p => {
-            p.vx += this.gravity.x * 0.02 * this.reactivity;
-            p.vy += this.gravity.y * 0.02 * this.reactivity;
+        // Color Interpolation (Subtle shift to Sacred Rose if near focus)
+        const isSacred = this.energy > 0.7;
+        this.targetColor = isSacred ? '#FF8B8B' : (this.aiState.color || '#00ffcc');
+        this.particleColor = this.targetColor;
 
-            // Friction
-            p.vx *= 0.99;
-            p.vy *= 0.99;
+        this.particles.forEach(p => {
+            // --- 2. Floating "Life" Physics ---
+            // Apply Neural Noise + Pulse Scaling
+            p.vx += (this.gravity.x + Math.sin(time + p.x * 0.01) * 0.02) * this.reactivity * globalScale;
+            p.vy += (this.gravity.y + Math.cos(time + p.y * 0.01) * 0.02) * this.reactivity * globalScale;
+
+            // Fluid-like Friction
+            p.vx *= 0.97;
+            p.vy *= 0.97;
 
             p.x += p.vx;
             p.y += p.vy;
 
-            // Screen Loop
+            // Bound warp
             if (p.x < 0) p.x = w;
             if (p.x > w) p.x = 0;
             if (p.y < 0) p.y = h;
             if (p.y > h) p.y = 0;
 
-            ctx.fillStyle = this.particleColor;
+            // --- 3. Render Organic "Soul" Droplet ---
+            const size = (p.size + this.energy * 4) * globalScale;
+
+            ctx.shadowBlur = this.energy * 20 * globalScale;
+            ctx.shadowColor = this.particleColor;
+
+            // Subtle Radial Gradient for "Warmth"
+            const radGrad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size * 2);
+            radGrad.addColorStop(0, this.particleColor);
+            radGrad.addColorStop(1, 'transparent');
+
+            ctx.fillStyle = radGrad;
+            ctx.globalAlpha = p.alpha * (isSacred ? 1.2 : 1.0);
+
             ctx.beginPath();
-            // Size based on energy
-            ctx.arc(p.x, p.y, 2 + this.energy * 3, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
             ctx.fill();
+
+            ctx.globalAlpha = 1.0;
+            ctx.shadowBlur = 0;
         });
     },
 
     triggerMintCelebration() {
-        console.log("💥 ANTIGRAVITY CELEBRATION TRIGGERED 💥");
         this.glowState = "reactive";
-        this.particleColor = "#FFD700"; // Gold
+        this.targetColor = "#FFD700"; // Gold Flash
         this.energy = 1.0;
 
         this.particles.forEach(p => {
-            // Explosion from center
-            const dx = p.x - (this.canvas ? this.canvas.width / 2 : 0);
-            const dy = p.y - (this.canvas ? this.canvas.height / 2 : 0);
-            const angle = Math.atan2(dy, dx);
-            const force = 10 + Math.random() * 20;
-
+            const angle = Math.random() * Math.PI * 2;
+            const force = 15 + Math.random() * 10;
             p.vx = Math.cos(angle) * force;
             p.vy = Math.sin(angle) * force;
+            p.alpha = 1.0;
         });
+
+        // Reset to normal after 2 seconds
+        setTimeout(() => {
+            this.targetColor = this.aiState.color || '#00ffcc';
+            this.energy = this.aiState.energyScore || 0.5;
+            this.glowState = "stable";
+        }, 2000);
+    },
+
+    triggerResonance() {
+        const roseGold = "#FF8B8B";
+        this.targetColor = roseGold;
+        this.energy = 0.9;
+        this.reactivity = 2.0;
+
+        // Speed up particles in a circular swirl
+        this.particles.forEach(p => {
+            const dx = p.x - this.canvas.width / 2;
+            const dy = p.y - this.canvas.height / 2;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            p.vx += -(dy / dist) * 2;
+            p.vy += (dx / dist) * 2;
+            p.alpha = 0.8;
+        });
+
+        setTimeout(() => {
+            this.targetColor = this.aiState.color || '#00ffcc';
+            this.energy = this.aiState.energyScore || 0.5;
+            this.reactivity = this.aiState.reactivity || 1.0;
+        }, 1500);
+    },
+
+    triggerTranquility() {
+        const tranquilBlue = "#A5F3FC"; // Cyan 200/300
+        this.targetColor = tranquilBlue;
+        this.energy = 0.2;
+        this.reactivity = 0.3;
+
+        // Decelerate everything
+        this.particles.forEach(p => {
+            p.vx *= 0.1;
+            p.vy *= 0.1;
+            p.alpha = 1.0;
+        });
+
+        setTimeout(() => {
+            this.targetColor = this.aiState.color || '#00ffcc';
+            this.energy = this.aiState.energyScore || 0.5;
+            this.reactivity = this.aiState.reactivity || 1.0;
+        }, 2500);
     }
 };
+

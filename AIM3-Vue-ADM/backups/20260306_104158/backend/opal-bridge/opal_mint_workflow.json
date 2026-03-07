@@ -1,0 +1,119 @@
+{
+    "metadata": {
+        "intent": "An application that functions as an OKE (Only Known Events)–compliant Multimodal Observation Agent...",
+        "revision_intents": [
+            "OKE Content Generation & Publishing Prompt..."
+        ],
+        "raw_intent": "Opal Workflow Prompt...",
+        "url": "drive:/1W8XkjRI3h1uTPiNRtfjL4HRwE2cilFbP",
+        "title": "OKE Mint",
+        "description": "Extract objective, perceivable facts from audio, images, and video inputs.",
+        "version": "0.0.1",
+        "nodes": [
+            {
+                "id": "node_step_image_prompt",
+                "metadata": {
+                    "title": "Generate Image Prompt"
+                },
+                "type": "embed://a2/generate.bgl.json#module:main",
+                "configuration": {
+                    "config$prompt": {
+                        "role": "user",
+                        "parts": [
+                            {
+                                "text": "..."
+                            }
+                        ]
+                    },
+                    "generation-mode": "text"
+                }
+            },
+            {
+                "id": "node_step_generated_image",
+                "metadata": {
+                    "title": "Generate Image"
+                },
+                "type": "embed://a2/generate.bgl.json#module:main",
+                "configuration": {
+                    "config$prompt": {
+                        "role": "user",
+                        "parts": [
+                            {
+                                "text": "..."
+                            }
+                        ]
+                    },
+                    "generation-mode": "image"
+                }
+            },
+            {
+                "id": "node_step_video_prompt",
+                "metadata": {
+                    "title": "Generate Video Prompt"
+                },
+                "type": "embed://a2/generate.bgl.json#module:main",
+                "configuration": {
+                    "config$prompt": {
+                        "role": "user",
+                        "parts": [
+                            {
+                                "text": "..."
+                            }
+                        ]
+                    },
+                    "generation-mode": "text"
+                }
+            },
+            {
+                "id": "node_step_generated_video",
+                "metadata": {
+                    "title": "Generate Video"
+                },
+                "type": "embed://a2/generate.bgl.json#module:main",
+                "configuration": {
+                    "config$prompt": {
+                        "role": "user",
+                        "parts": [
+                            {
+                                "text": "..."
+                            }
+                        ]
+                    },
+                    "generation-mode": "video"
+                }
+            },
+            {
+                "id": "node_step_generated_visuals",
+                "metadata": {
+                    "title": "Display Visuals on Webpage"
+                },
+                "type": "embed://a2/a2.bgl.json#module:render-outputs",
+                "configuration": {
+                    "text": {
+                        "role": "user",
+                        "parts": [
+                            {
+                                "text": "..."
+                            }
+                        ]
+                    },
+                    "p-render-mode": "Auto"
+                }
+            }
+        ],
+        "edges": [
+            {
+                "from": "ask_user_atomic_facts",
+                "to": "node_step_image_prompt"
+            },
+            {
+                "from": "node_step_image_prompt",
+                "to": "node_step_generated_image"
+            },
+            {
+                "from": "node_step_generated_image",
+                "to": "node_step_generated_visuals"
+            }
+        ]
+    }
+}

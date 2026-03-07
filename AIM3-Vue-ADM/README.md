@@ -1,3 +1,10 @@
+# AIM3 / AMAS OS
+**[OKE Atomic Mint Genesis Hash]**: `e658c74fffd7d14b3d26a7e6e4f718b33631660f03fecd9afe302083a7ff7311`
+**[Proof of Creation]**: See [LICENSE.md](./LICENSE.md) for the official OKE Atomic Mint Declaration and Shrink-wrap License.
+**[Verification]**: https://sepolia.basescan.org/tx/0xd4ac63ede88839a7c004ef0132fe8b9e9a6a94a90cff78377648ad10ec2017bc
+
+---
+
 # AIM3: AI-Driven Serverless P2P Ecosystem
 
 **AI駆動・サーバーレス設計 (AI-Driven & Serverless Architecture)**
@@ -73,5 +80,3 @@ This system is designed to interface with the **Opal** visual agent builder for 
 - **Connection**: Configure the final "Custom Tool" node in Opal to target this server's gateway:
   - **Endpoint**: `POST /amane-l0/mint-fact`
   - **Payload**: JSON extracted from the previous Opal nodes.
-
-

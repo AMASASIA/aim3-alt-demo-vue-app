@@ -1,0 +1,123 @@
+{
+    "workflow": {
+        "id": "workflow_deployment_dashboard_gen",
+        "name": "1-Click Deployment Dashboard Generator",
+        "description": "Generates a complete project landing page with hero image, video showcase, and synthesized context from raw atomic facts.",
+        "version": "1.0.0"
+    },
+    "nodes": [
+        {
+            "id": "input_atomic_facts",
+            "type": "InputNode",
+            "config": {
+                "label": "Atomic Facts",
+                "description": "Raw project data in JSON format",
+                "example": {
+                    "project_name": "Project Alpha",
+                    "core_tech": "Vue, Gemini, Firebase",
+                    "mission": "Democratize AI"
+                }
+            }
+        },
+        {
+            "id": "input_labels",
+            "type": "InputNode",
+            "config": {
+                "label": "Labels",
+                "description": "Tags and categories",
+                "example": [
+                    "AI",
+                    "Web3",
+                    "Open Source"
+                ]
+            }
+        },
+        {
+            "id": "step_synthesize_context",
+            "type": "ProcessNode",
+            "config": {
+                "function": "generate_marketing_copy",
+                "model": "gemini-1.5-pro",
+                "systemInstruction": "Analyze the Atomic Facts and Labels. Synthesize a compelling Project Overview, Tagline, and Feature List for a landing page.",
+                "inputs": [
+                    "input_atomic_facts",
+                    "input_labels"
+                ],
+                "outputs": [
+                    "project_context"
+                ]
+            }
+        },
+        {
+            "id": "step_gen_hero_image",
+            "type": "MediaNode",
+            "config": {
+                "function": "generate_image",
+                "prompt_template": "A futuristic, high-fidelity hero image for a project about {{project_context.tagline}}. Cyberpunk style, 8k resolution.",
+                "inputs": [
+                    "project_context"
+                ],
+                "outputs": [
+                    "hero_image_url"
+                ]
+            }
+        },
+        {
+            "id": "step_gen_showcase_video",
+            "type": "MediaNode",
+            "config": {
+                "function": "generate_video",
+                "prompt_template": "Cinematic showcase of {{project_context.project_name}}. Dynamic camera movement, tech visualization.",
+                "inputs": [
+                    "project_context"
+                ],
+                "outputs": [
+                    "showcase_video_url"
+                ]
+            }
+        },
+        {
+            "id": "step_assemble_dashboard",
+            "type": "AssemblyNode",
+            "config": {
+                "function": "construct_landing_page",
+                "template": "modern_saas_v1",
+                "inputs": [
+                    "project_context",
+                    "hero_image_url",
+                    "showcase_video_url"
+                ],
+                "outputs": [
+                    "dashboard_html",
+                    "deployment_manifest"
+                ]
+            }
+        }
+    ],
+    "edges": [
+        {
+            "source": "input_atomic_facts",
+            "target": "step_synthesize_context"
+        },
+        {
+            "source": "input_labels",
+            "target": "step_synthesize_context"
+        },
+        {
+            "source": "step_synthesize_context",
+            "target": "step_gen_hero_image"
+        },
+        {
+            "source": "step_synthesize_context",
+            "target": "step_gen_showcase_video"
+        },
+        {
+            "source": "step_gen_hero_image",
+            "target": "step_assemble_dashboard"
+        },
+        {
+            "source": "step_gen_showcase_video",
+            "target": "step_assemble_dashboard"
+        }
+    ]
+}
