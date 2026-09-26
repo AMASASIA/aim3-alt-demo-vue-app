@@ -1,0 +1,3 @@
+[submodule "awallet-core/submodules/matsuri-app"]
+	path = awallet-core/submodules/matsuri-app
+	url = https://github.com/curvegrid/matsuri-stablecoin-sample-app.git
