@@ -1,0 +1,33 @@
+﻿name: Trigger Tive-AI A2A Settlement
+
+on:
+  workflow_dispatch:
+    inputs:
+      trigger_source:
+        description: 'Trigger Source (e.g. Pico-W-Hardware-Button)'
+        required: true
+        default: 'Pico-W-Hardware-Button'
+      action_type:
+        description: 'A2A Action Type'
+        required: true
+        default: 'settle_matsuri_jpy'
+  repository_dispatch:
+    types: [pico_w_button_press]
+
+jobs:
+  execute-settlement:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Tive◉AI Engine & Matsuri Settlement
+        run: |
+          echo "Hardware trigger received from Pico-W!"
+          echo "Executing AWallet Tive◉AI liaison pipeline..."
+          
+          # Vercel 上の Tive-AI API エンドポイントへ実行命令をディスパッチ
+          curl -X POST https://awallet-eth-tokyo.vercel.app/api/liaison \
+            -H "Content-Type: application/json" \
+            -d '{
+              "source": "Pico-W-Hardware-Trigger",
+              "module": "matsuri-stablecoin",
+              "action": "A2A_MICRO_SETTLEMENT"
+            }'
